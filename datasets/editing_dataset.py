@@ -85,7 +85,7 @@ class ImageEditingDataset(Dataset):
             input_ids[:] = self.vl_chat_processor.pad_id
         input_ids = torch.cat((self.input_ids1, input_ids, self.input_ids2), dim=0)
 
-        return {"input_ids":input_ids, "image1":image1, "image2":image2, "task_type":2}
+        return {"input_ids":input_ids, "image1":image1, "image2":image2}
 
     def __len__(self):
         return len(self.alldata)
