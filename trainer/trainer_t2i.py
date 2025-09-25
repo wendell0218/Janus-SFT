@@ -124,12 +124,7 @@ class TextToImageTrainer(TrainerBase):
 
         self.meters = EasyDict()
         self.meters["batch_time"] = AverageMeter(self.cfg.common.log_interval, fstr="%.3f")
-        self.meters["loss1"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
-        self.meters["grad_norm1"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
-        self.meters["loss2"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
-        self.meters["grad_norm2"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
-        self.meters["loss3"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
-        self.meters["grad_norm3"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
+        self.meters["loss"] = AverageMeter(self.cfg.common.log_interval, fstr="%.5f")
         self.meters["lr"] = AverageMeter(self.cfg.common.log_interval, fstr="%.3e")
 
     def get_next_data(self):
@@ -160,7 +155,7 @@ class TextToImageTrainer(TrainerBase):
         
         reduced_loss = self._loss.clone().detach() / self.dist.world_size
         reduced_grad_norm = total_norm.clone().detach() / self.dist.world_size
-        self.meters.loss1.reduce_update(reduced_loss)
+        self.meters.loss.reduce_update(reduced_loss)
         self.meters.grad_norm1.reduce_update(reduced_grad_norm)
         self.meters.lr.reduce_update(torch.tensor(self.optimizer.param_groups[0]['lr']).cuda() / self.dist.world_size)
 
